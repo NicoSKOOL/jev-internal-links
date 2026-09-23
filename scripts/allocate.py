@@ -174,7 +174,7 @@ def main():
     print(f"  needs review:       {sum(1 for c in chosen if c['action'] == 'review'):,}")
     print(f"  source pages:       {len(per_source):,}")
     print(f"  target pages:       {len(per_target):,}")
-    print(f"  max per target:     {max(per_target.values())}")
+    print(f"  max per target:     {max(per_target.values(), default=0)}")
     print(f"next step anchors.py: about ${len(chosen) * 0.0017:.2f} "
           f"(writing model, ~$0.0017 per allocated link)")
     print(f"wrote {OUT}")

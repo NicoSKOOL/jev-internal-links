@@ -131,6 +131,10 @@ def main():
 
     step("shortlist.py")
     n_calls = len(json.loads((workdir / "data" / "candidates.json").read_text()))
+    if n_calls == 0:
+        sys.exit(f"\nNothing to link: {len(pages)} page(s) crawled, but no paragraph has a "
+                 f"related page to point to. Internal linking needs a site with several "
+                 f"content pages (check the sitemap lists them all).")
     # Allocation usually keeps ~12% of paragraphs; budget anchors on that.
     est = n_calls * JEV_PER_CALL + n_calls * 0.12 * ANCHOR_PER_LINK
     print(f"\nestimated cost: ${est:.2f} (Jev ${n_calls * JEV_PER_CALL:.2f} + anchors), "
