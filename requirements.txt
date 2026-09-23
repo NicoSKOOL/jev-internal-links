@@ -1,0 +1,7 @@
+requests
+beautifulsoup4
+lxml
+numpy
+sentence-transformers
+pyyaml
+openpyxl

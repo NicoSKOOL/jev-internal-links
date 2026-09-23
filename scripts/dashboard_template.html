@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jev Link Decisions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F2F4F7; --sheet:#FFFFFF; --ink:#15213B; --ink-2:#4A5670; --ink-3:#7D879A;
+  --rule:#DDE2EA; --link:#1F4FE0; --link-soft:#E3EAFD; --amber:#B7791F; --amber-soft:#F7EDD9;
+  --rose:#B4475F; --rose-soft:#F6E2E7; --grey:#8C96A3; --grey-soft:#EBEEF2; --bar:#CBD3E0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1626; --sheet:#172036; --ink:#E6EAF2; --ink-2:#AEB7C8; --ink-3:#7F8AA0;
+    --rule:#26314A; --link:#7FA0FF; --link-soft:#1D2D57; --amber:#E0A94D; --amber-soft:#3A2F1A;
+    --rose:#E0879B; --rose-soft:#3D2230; --grey:#8C96A3; --grey-soft:#212B40; --bar:#33405C;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1626; --sheet:#172036; --ink:#E6EAF2; --ink-2:#AEB7C8; --ink-3:#7F8AA0;
+  --rule:#26314A; --link:#7FA0FF; --link-soft:#1D2D57; --amber:#E0A94D; --amber-soft:#3A2F1A;
+  --rose:#E0879B; --rose-soft:#3D2230; --grey:#8C96A3; --grey-soft:#212B40; --bar:#33405C;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 "IBM Plex Sans",system-ui,sans-serif;font-variant-numeric:tabular-nums}
+a{color:var(--link)}
+:focus-visible{outline:2px solid var(--link);outline-offset:2px;border-radius:3px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+/* Headline */
+header.top{padding:44px 0 26px}
+.who{color:var(--ink-3);font-size:13.5px;margin:0 0 14px}
+h1{font-family:Newsreader,Georgia,serif;font-weight:500;font-size:clamp(30px,4.4vw,48px);line-height:1.1;letter-spacing:-.01em;margin:0;max-width:22ch}
+h1 .ln{color:var(--link);text-decoration:underline;text-decoration-thickness:.07em;text-underline-offset:.12em}
+.lede{color:var(--ink-2);max-width:68ch;margin:16px 0 0;font-size:15.5px}
+
+/* Funnel: a real sequence, left to right */
+.funnel{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:30px 0 8px;border:1px solid var(--rule);border-radius:10px;background:var(--sheet);overflow:hidden}
+.step{padding:16px 16px 14px;border-right:1px solid var(--rule);position:relative}
+.step:last-child{border-right:0}
+.step .n{font-size:27px;font-weight:600;line-height:1.1}
+.step .l{font-size:12.5px;color:var(--ink-2);margin-top:4px;line-height:1.35}
+.step .d{font-size:11.5px;color:var(--ink-3);margin-top:6px}
+.step .track{height:4px;background:var(--grey-soft);border-radius:2px;margin-top:12px;overflow:hidden}
+.step .track i{display:block;height:100%;background:var(--ink-2)}
+.step.final .n{color:var(--link)} .step.final .track i{background:var(--link)}
+.meta-line{display:flex;flex-wrap:wrap;gap:6px 22px;color:var(--ink-3);font-size:12.5px;margin:10px 0 0}
+.meta-line b{color:var(--ink-2);font-weight:600}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;margin:30px 0 0;border-bottom:1px solid var(--rule)}
+.tab{appearance:none;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;font:inherit;font-weight:500;color:var(--ink-3);cursor:pointer;margin-bottom:-1px}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+
+/* Controls */
+.controls{position:sticky;top:0;z-index:5;background:var(--paper);padding:14px 0 12px;border-bottom:1px solid var(--rule)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;border:1px solid var(--rule);background:var(--sheet);color:var(--ink-2);border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer;display:inline-flex;gap:7px;align-items:center}
+.chip .c{color:var(--ink-3);font-size:12px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip[aria-pressed="true"] .c{color:inherit;opacity:.7}
+.row2{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin-top:12px}
+input[type=search],select{font:inherit;font-size:13.5px;color:var(--ink);background:var(--sheet);border:1px solid var(--rule);border-radius:7px;padding:7px 10px}
+input[type=search]{flex:1 1 240px;min-width:0}
+.slider{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-2)}
+.slider input{width:150px;accent-color:var(--link)}
+.slider output{font-weight:600;color:var(--ink);min-width:32px}
+.whatif{font-size:12.5px;color:var(--ink-3);margin:8px 0 0}
+.whatif b{color:var(--link);font-weight:600}
+.btn{appearance:none;font:inherit;font-size:13px;font-weight:500;border-radius:7px;padding:7px 12px;cursor:pointer;border:1px solid var(--ink);background:var(--ink);color:var(--paper)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+.spacer{flex:1}
+
+/* Decision cards */
+.countrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0 12px}
+.count{color:var(--ink-3);font-size:13px;margin:0;flex:1}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;margin:0 0 12px;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);overflow:hidden}
+.card .src{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;padding:11px 18px;border-bottom:1px solid var(--rule);font-size:13px}
+.src .pth{font-weight:600;color:var(--ink);word-break:break-all}
+.src .pn{color:var(--ink-3)}
+.pill{font-size:12px;font-weight:600;border-radius:5px;padding:2px 8px;margin-left:auto;white-space:nowrap}
+.o-linked_apply .pill{background:var(--link-soft);color:var(--link)}
+.o-linked_review .pill{background:var(--amber-soft);color:var(--amber)}
+.o-model_said_none .pill{background:var(--rose-soft);color:var(--rose)}
+.pill{background:var(--grey-soft);color:var(--ink-2)}
+.o-linked_apply{border-left:3px solid var(--link)}
+.o-linked_review{border-left:3px solid var(--amber)}
+.para{font-family:Newsreader,Georgia,serif;font-size:17px;line-height:1.62;padding:16px 18px 18px;margin:0;color:var(--ink);max-width:70ch}
+.para a{font-weight:600;text-decoration-thickness:1.5px;text-underline-offset:3px;background:var(--link-soft);border-radius:3px;padding:0 2px}
+.dim .para{color:var(--ink-2)}
+.cands{padding:14px 18px 16px;border-left:1px solid var(--rule);font-size:13px}
+.cands h4{font-size:12.5px;font-weight:500;color:var(--ink-3);margin:0 0 10px}
+.cand{display:grid;grid-template-columns:1fr 42px;gap:2px 10px;margin:0 0 9px;align-items:end}
+.cand .t{color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cand .pv{text-align:right;color:var(--ink-3)}
+.cand .b{grid-column:1/-1;height:6px;background:var(--grey-soft);border-radius:3px;overflow:hidden}
+.cand .b i{display:block;height:100%;background:var(--bar);border-radius:3px}
+.cand.pick .t{color:var(--ink);font-weight:600}
+.cand.pick .pv{color:var(--ink);font-weight:600}
+.cand.pick .b i{background:var(--ink)}
+.o-linked_apply .cand.pick .b i,.o-linked_review .cand.pick .b i{background:var(--link)}
+.cand.none .t{color:var(--rose)}
+.cand.none.pick .b i{background:var(--rose)}
+.facts{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;padding:10px 18px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--ink-3);background:color-mix(in srgb,var(--paper) 55%,var(--sheet))}
+.facts b{color:var(--ink-2);font-weight:600}
+.facts .chg{color:var(--amber);font-weight:600}
+.facts .acts{margin-left:auto;display:flex;gap:6px}
+.facts .acts button{appearance:none;font:inherit;font-size:12.5px;border:1px solid var(--rule);background:var(--sheet);color:var(--ink-2);border-radius:6px;padding:4px 10px;cursor:pointer}
+.facts .acts button[aria-pressed="true"].ok{background:var(--link);border-color:var(--link);color:#fff}
+.facts .acts button[aria-pressed="true"].no{background:var(--rose);border-color:var(--rose);color:#fff}
+.more{display:block;margin:18px auto 60px}
+.empty{padding:40px 0;color:var(--ink-2);text-align:center}
+
+/* Pages table */
+table{width:100%;border-collapse:collapse;background:var(--sheet);border:1px solid var(--rule);border-radius:10px;overflow:hidden;font-size:13.5px;margin:18px 0 60px}
+th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--rule)}
+th{font-size:12.5px;font-weight:600;color:var(--ink-2);background:color-mix(in srgb,var(--paper) 55%,var(--sheet));cursor:pointer;user-select:none}
+td.num,th.num{text-align:right}
+td .pth{word-break:break-all}
+tr.orphan td:first-child{box-shadow:inset 3px 0 0 var(--rose)}
+.gain{color:var(--link);font-weight:600}
+.note{color:var(--ink-3);font-size:13px;margin:18px 0 0;max-width:75ch}
+footer{color:var(--ink-3);font-size:12.5px;padding:0 0 40px}
+[hidden]{display:none!important}
+
+@media (max-width:820px){
+  .wrap{padding:0 16px}
+  .funnel{grid-template-columns:1fr 1fr}
+  .step{border-bottom:1px solid var(--rule)}
+  .step:last-child{grid-column:1/-1;border-bottom:0}
+  .card{grid-template-columns:1fr}
+  .cands{border-left:0;border-top:1px solid var(--rule)}
+  .pill{margin-left:0}
+  .controls{position:static}
+  table{display:block;overflow-x:auto}
+}
+@media (prefers-reduced-motion:no-preference){
+  .step .track i{transition:width .9s cubic-bezier(.2,.7,.2,1)}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="who" id="who"></p>
+    <h1 id="headline"></h1>
+    <p class="lede" id="lede"></p>
+    <div class="funnel" id="funnel"></div>
+    <div class="meta-line" id="metaLine"></div>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-tab="decisions">Every decision</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="pages">Pages that gain links</button>
+  </div>
+
+  <section id="tab-decisions">
+    <div class="controls">
+      <div class="chips" id="chips"></div>
+      <div class="row2">
+        <input type="search" id="q" placeholder="Search paragraphs, pages or anchors" aria-label="Search">
+        <select id="stage" aria-label="Reader stage">
+          <option value="">Any reader stage</option>
+          <option value="learning">Learning</option>
+          <option value="comparing">Comparing</option>
+          <option value="ready">Ready to act</option>
+        </select>
+        <select id="sort" aria-label="Sort">
+          <option value="conf">Most confident first</option>
+          <option value="page">By page</option>
+          <option value="close">Closest calls first</option>
+        </select>
+        <label class="slider">Min confidence
+          <input type="range" id="minc" min="0" max="1" step="0.01" value="0">
+          <output id="mincv">0.00</output>
+        </label>
+      </div>
+      <p class="whatif" id="whatif"></p>
+    </div>
+    <div class="countrow"><p class="count" id="count"></p>
+      <button class="btn ghost" id="exportAll">Download this view</button>
+      <button class="btn" id="exportOk">Download approved links</button></div>
+    <div id="list"></div>
+    <button class="btn ghost more" id="more" hidden>Show 40 more</button>
+  </section>
+
+  <section id="tab-pages" hidden>
+    <p class="note">Inbound links counted from body content on the live site at crawl time. Pages outlined in rose have one or fewer contextual links pointing at them today.</p>
+    <table id="pages"><thead><tr>
+      <th data-k="0">Page</th><th class="num" data-k="1">Inbound now</th>
+      <th class="num" data-k="2">New from this plan</th><th class="num" data-k="3">After</th>
+    </tr></thead><tbody></tbody></table>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const S = DATA.summary, U = DATA.urls, R = DATA.rows;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const f2 = v => v == null ? "–" : v.toFixed(2);
+const fmt = n => n.toLocaleString("en-US");
+const isLinked = o => o === "linked_apply" || o === "linked_review";
+
+/* Approvals live in this browser only. */
+const KEY = "jev-approvals:" + S.site + ":" + S.date;
+let approvals = {};
+try { approvals = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
+const saveApprovals = () => { try { localStorage.setItem(KEY, JSON.stringify(approvals)); } catch (e) {} };
+
+/* ---------- headline + funnel ---------- */
+const cnt = {}; R.forEach(r => cnt[r.o] = (cnt[r.o] || 0) + 1);
+const linked = (cnt.linked_apply || 0) + (cnt.linked_review || 0);
+const picked = R.length - (cnt.model_said_none || 0) - (cnt.api_error || 0);
+const passed = picked - (cnt.low_confidence || 0) - (cnt.not_warranted || 0) - (cnt.no_natural_anchor || 0) - (cnt.self_link || 0);
+const allocated = linked + (cnt.no_anchor || 0);
+
+$("who").textContent = `${S.site} · ${S.pages} pages crawled · ${S.date}`;
+$("headline").innerHTML = `Jev read ${fmt(R.length)} paragraphs and put <span class="ln">${linked} links</span> in them.`;
+$("lede").textContent = `Jev never writes anything. For each paragraph it saw four candidate pages plus “none of these”, and answered with probabilities. Rules you control in config.yaml then decided what survived, and a writing model found anchor text already in the paragraph.`;
+
+const steps = [
+  [R.length, "paragraphs asked", "one Jev call each"],
+  [picked, "Jev picked a page", `${fmt(cnt.model_said_none || 0)} said none fit`],
+  [passed, "cleared the confidence bars", `min confidence ${f2(S.thresholds.min_confidence)}`],
+  [allocated, "fit under the page caps", `${S.caps.max_new_links_per_source} per page, ${S.caps.max_new_links_per_target} per target`],
+  [linked, "had a clean anchor", `${cnt.linked_apply || 0} high confidence, ${cnt.linked_review || 0} to review`],
+];
+$("funnel").innerHTML = steps.map((s, i) => `
+  <div class="step${i === steps.length - 1 ? " final" : ""}">
+    <div class="n">${fmt(s[0])}</div><div class="l">${s[1]}</div><div class="d">${s[2]}</div>
+    <div class="track"><i style="width:0" data-w="${Math.max(1.5, 100 * s[0] / R.length)}%"></i></div>
+  </div>`).join("");
+requestAnimationFrame(() => requestAnimationFrame(() =>
+  document.querySelectorAll(".step .track i").forEach(i => i.style.width = i.dataset.w)));
+
+const cons = S.consistency;
+$("metaLine").innerHTML = [
+  `Model <b>${esc(S.model)}</b>`,
+  `Jev cost <b>$${S.cost.toFixed(3)}</b> for ${fmt(S.tokens)} tokens`,
+  cons ? `Re-run on identical input: <b>${(100 * cons.same_pick / cons.paired).toFixed(1)}%</b> same pick, <b>${(100 * cons.high_conf_same / cons.high_conf).toFixed(0)}%</b> when confidence was ${f2(S.thresholds.auto_approve_confidence)} or higher` : "",
+].filter(Boolean).map(s => `<span>${s}</span>`).join("");
+
+/* ---------- filter chips ---------- */
+const GROUPS = [
+  ["linked", "Linked", r => isLinked(r.o)],
+  ["review", "Needs review", r => r.o === "linked_review"],
+  ["noanchor", "Kept, no anchor", r => r.o === "no_anchor"],
+  ["capped", "Lost to page caps", r => ["source_full", "too_close", "target_full", "duplicate_pair"].includes(r.o)],
+  ["none", "Jev said none", r => r.o === "model_said_none"],
+  ["unsure", "Not sure enough", r => ["low_confidence", "not_warranted", "no_natural_anchor", "self_link", "api_error"].includes(r.o)],
+  ["changed", "Changed since last run", r => r.x === false],
+  ["all", "Everything", () => true],
+];
+let group = "linked";
+$("chips").innerHTML = GROUPS.filter(g => g[0] !== "changed" || cons).map(g =>
+  `<button class="chip" data-g="${g[0]}" aria-pressed="${g[0] === group}">${g[1]} <span class="c">${fmt(R.filter(g[2]).length)}</span></button>`).join("");
+$("chips").addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if (!b) return;
+  group = b.dataset.g;
+  document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c === b));
+  render(true);
+});
+
+/* ---------- list ---------- */
+let shown = 40, current = [];
+function filtered() {
+  const g = GROUPS.find(x => x[0] === group)[2];
+  const q = $("q").value.trim().toLowerCase(), st = $("stage").value, mc = +$("minc").value;
+  let out = R.filter(r => g(r) && (!st || r.r === st) && (r.c ?? 0) >= mc &&
+    (!q || r.t.toLowerCase().includes(q) || U[r.s][0].includes(q) || (r.a || "").toLowerCase().includes(q) ||
+      r.k.some(k => U[k[0]][0].includes(q) || U[k[0]][1].toLowerCase().includes(q))));
+  const s = $("sort").value;
+  if (s === "conf") out.sort((a, b) => (b.c ?? 0) - (a.c ?? 0));
+  if (s === "page") out.sort((a, b) => U[a.s][0].localeCompare(U[b.s][0]) || a.p - b.p);
+  if (s === "close") out.sort((a, b) => Math.abs((a.c ?? 0) - S.thresholds.min_confidence) - Math.abs((b.c ?? 0) - S.thresholds.min_confidence));
+  return out;
+}
+
+function paraHTML(r) {
+  const t = esc(r.t);
+  if (!r.a) return t;
+  const a = esc(r.a), pick = r.k[+r.j - 1];
+  const href = pick ? "https://" + S.site + U[pick[0]][0] : "#";
+  return t.replace(a, `<a href="${esc(href)}" target="_blank" rel="noopener">${a}</a>`);
+}
+
+function card(r) {
+  const lab = S.outcomes[r.o];
+  const cands = r.k.map((k, i) => {
+    const pick = r.j === String(i + 1);
+    return `<div class="cand${pick ? " pick" : ""}" title="${esc(U[k[0]][1])}">
+      <span class="t">${esc(U[k[0]][0])}</span><span class="pv">${f2(k[1])}</span>
+      <span class="b"><i style="width:${(100 * (k[1] || 0)).toFixed(1)}%"></i></span></div>`;
+  }).join("") + `<div class="cand none${r.j === "none" ? " pick" : ""}">
+      <span class="t">None of these</span><span class="pv">${f2(r.n)}</span>
+      <span class="b"><i style="width:${(100 * (r.n || 0)).toFixed(1)}%"></i></span></div>`;
+
+  let cons = "";
+  if (r.x === false) cons = `<span class="chg">Last run picked ${r.y === "none" ? "none" : "#" + esc(r.y)}</span>`;
+  else if (r.x === true) cons = `<span>Same pick as last run</span>`;
+
+  const ap = approvals[r.i];
+  const acts = isLinked(r.o) ? `<span class="acts">
+      <button class="ok" data-id="${r.i}" data-v="yes" aria-pressed="${ap === "yes"}">Approve</button>
+      <button class="no" data-id="${r.i}" data-v="no" aria-pressed="${ap === "no"}">Reject</button></span>` : "";
+
+  return `<article class="card o-${r.o}${isLinked(r.o) ? "" : " dim"}">
+    <div class="src"><span class="pth">${esc(U[r.s][0])}</span><span class="pn">paragraph ${r.p}</span><span class="pill">${esc(lab)}</span></div>
+    <p class="para">${paraHTML(r)}</p>
+    <div class="cands"><h4>Which page should this reader go to next?</h4>${cands}</div>
+    <div class="facts">
+      <span>Confidence <b>${f2(r.c)}</b></span>
+      <span>Link warranted <b>${f2(r.w)}</b></span>
+      <span>Anchor available <b>${f2(r.v)}</b></span>
+      <span>Reader <b>${esc(r.r || "–")}</b></span>
+      <span>Promotional <b>${f2(r.m)}</b></span>
+      ${cons}${acts}
+    </div></article>`;
+}
+
+function render(reset) {
+  if (reset) shown = 40;
+  current = filtered();
+  $("count").textContent = `${fmt(current.length)} decision${current.length === 1 ? "" : "s"}`;
+  $("list").innerHTML = current.length
+    ? current.slice(0, shown).map(card).join("")
+    : `<p class="empty">No decisions match. Clear the search or lower the confidence bar.</p>`;
+  $("more").hidden = current.length <= shown;
+  const mc = +$("minc").value;
+  const keep = R.filter(r => isLinked(r.o) && r.c >= mc).length;
+  $("whatif").innerHTML = mc > S.thresholds.min_confidence
+    ? `Raising the bar to ${mc.toFixed(2)} would keep <b>${keep} of ${linked}</b> links. No new API calls: Jev already returned a number for every decision.`
+    : `Drag the confidence bar to see how many links survive a stricter threshold.`;
+}
+
+$("more").onclick = () => { shown += 40; render(false); };
+["q", "stage", "sort"].forEach(id => $(id).addEventListener("input", () => render(true)));
+$("minc").addEventListener("input", e => { $("mincv").textContent = (+e.target.value).toFixed(2); render(true); });
+$("list").addEventListener("click", e => {
+  const b = e.target.closest(".acts button"); if (!b) return;
+  const id = b.dataset.id, v = b.dataset.v;
+  approvals[id] = approvals[id] === v ? undefined : v;
+  if (!approvals[id]) delete approvals[id];
+  saveApprovals();
+  b.parentElement.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", approvals[id] === x.dataset.v));
+});
+
+/* ---------- CSV export ---------- */
+function download(name, rows) {
+  const csv = rows.map(r => r.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], {type: "text/csv"}));
+  a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+const linkRow = r => {
+  const pick = r.k[+r.j - 1];
+  return [approvals[r.i] || "", S.outcomes[r.o], f2(r.c), "https://" + S.site + U[r.s][0], r.p, r.a,
+    pick ? "https://" + S.site + U[pick[0]][0] : "", r.r, r.t];
+};
+const HEAD = ["approved", "what_happened", "confidence", "source_url", "paragraph_no", "anchor_text", "target_url", "reader_stage", "paragraph"];
+$("exportAll").onclick = () => download(`jev-decisions-${group}.csv`, [HEAD, ...current.map(linkRow)]);
+$("exportOk").onclick = () => {
+  const ok = R.filter(r => approvals[r.i] === "yes");
+  if (!ok.length) { $("whatif").innerHTML = `Nothing approved yet. Use <b>Approve</b> on a linked card, then download.`; return; }
+  download("jev-approved-links.csv", [HEAD, ...ok.map(linkRow)]);
+};
+
+/* ---------- tabs ---------- */
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
+  document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x === t));
+  $("tab-decisions").hidden = t.dataset.tab !== "decisions";
+  $("tab-pages").hidden = t.dataset.tab !== "pages";
+});
+
+/* ---------- pages table ---------- */
+const gain = {}, inbound = {};
+R.forEach(r => r.k.forEach(k => inbound[k[0]] = k[3]));
+R.filter(r => isLinked(r.o)).forEach(r => { const k = r.k[+r.j - 1]; gain[k[0]] = (gain[k[0]] || 0) + 1; });
+let prow = Object.keys(gain).map(u => [U[u][0], inbound[u] ?? 0, gain[u], (inbound[u] ?? 0) + gain[u]]);
+let psort = [2, -1];
+function renderPages() {
+  const [k, d] = psort;
+  prow.sort((a, b) => (typeof a[k] === "string" ? a[k].localeCompare(b[k]) : a[k] - b[k]) * d);
+  document.querySelector("#pages tbody").innerHTML = prow.map(p =>
+    `<tr class="${p[1] <= 1 ? "orphan" : ""}"><td class="pth">${esc(p[0])}</td><td class="num">${p[1]}</td><td class="num gain">+${p[2]}</td><td class="num"><b>${p[3]}</b></td></tr>`).join("");
+}
+document.querySelectorAll("#pages th").forEach(th => th.onclick = () => {
+  const k = +th.dataset.k; psort = [k, psort[0] === k ? -psort[1] : (k === 0 ? 1 : -1)]; renderPages();
+});
+
+$("foot").textContent = `Approvals are saved in this browser only. Confidence is Jev's own estimate and is not independently calibrated, so a human still approves every link.`;
+render(true); renderPages();
+</script>
+</body>
+</html>

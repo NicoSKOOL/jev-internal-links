@@ -1,0 +1,49 @@
+# Internal link allocation rules.
+# These weights decide what gets linked. They are yours, not the model's:
+# change a number here and re-run allocate.py, no API calls needed.
+
+thresholds:
+  min_confidence: 0.70      # below this the model is guessing, so we ignore it
+  min_link_warranted: 0.80  # paragraph must genuinely raise an explorable topic
+  min_anchor_available: 0.70 # must be phrasable without rewriting the sentence
+  auto_approve_confidence: 0.88  # at or above, goes in the "apply" pile
+                                 # between min and this, goes to review queue
+
+weights:                    # how a surviving candidate is ranked
+  confidence: 1.0           # how sure the model is of the target
+  link_warranted: 0.6
+  anchor_available: 0.4
+  similarity: 0.8           # embedding closeness, a sanity anchor on the model
+  orphan_boost: 1.2         # favours targets almost nothing links to
+  money_page_match: 0.5     # bonus when a "ready" reader meets an offer page
+  commercial_penalty: -0.6  # promo paragraphs already push; don't stack links
+
+caps:
+  max_new_links_per_source: 3   # per page, so no page turns into a link farm
+  max_new_links_per_target: 8   # stops 37 paragraphs dogpiling one page
+  target_decay: 0.75            # each extra link to a target is worth 75% of
+                                # the last one: diminishing returns, made explicit
+  min_passages_between: 2       # don't put two new links in adjacent paragraphs
+
+# Your offer pages: pricing, sales, signup, booking, free trial. Exact paths.
+# A reader Jev marks as "ready to buy" who lands on one of these earns a bonus.
+# Leave the list empty if the site has none: nothing breaks.
+money_pages:
+  - /pricing/
+  - /contact/
+
+# Pages that should never RECEIVE new links in their body (they can still be
+# linked TO). Python regexes matched against the path. Listing pages, tag
+# archives and changelogs mostly produce weak links.
+exclude_sources:
+  - ^/(blog|news|novedades|articles)/$
+  - ^/(tag|tags|category|categories|author|page)/
+  - ^/(privacy|terms|legal|cookies?)
+
+shortlist:
+  candidates_per_paragraph: 4
+  min_similarity: 0.25
+  min_words: 25
+  # all-MiniLM-L6-v2 for English. run.py switches to
+  # paraphrase-multilingual-MiniLM-L12-v2 automatically for other languages.
+  embedding_model: all-MiniLM-L6-v2
