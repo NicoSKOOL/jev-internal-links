@@ -69,8 +69,24 @@ Then open `jev-links/example.com/config.yaml`, list your offer pages under `mone
 - **Rankings aren't promised.** To measure impact, compare linked pages against similar unlinked ones in Search Console after 60 to 90 days.
 - Jev's API is in early access. Check TypeSafe's terms before running it on client sites.
 
-## Built by
+## License
 
-[AI Ranking](https://airankingskool.com). Learn AI-powered SEO with the community that built this.
+MIT
 
-MIT licensed.
+---
+
+## Part of AI Ranking
+
+This is one of the free tools from **AI Ranking**, the community where we learn how to get businesses found on Google and recommended by AI (ChatGPT, Google AI Overviews, Perplexity).
+
+**Free community:** [skool.com/ai-ranking-free](https://skool.com/ai-ranking-free)  
+Every free skill in one place, with setup guides.
+
+**Premium:** [skool.com/ai-ranking](https://skool.com/ai-ranking)  
+For when you want help, not just tools:
+- Support when a skill or a site gets stuck
+- 1-1 sessions
+- Live Q&A calls
+- The full training on how to rank in AI search
+
+Built by [Nico Gorrono](https://airankingskool.com/about/)
